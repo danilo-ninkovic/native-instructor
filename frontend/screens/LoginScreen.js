@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, Image } from "react-native"
-import React, { useState, useFocusEffect, useCallback } from "react"
+import React, { useState, useCallback } from "react"
+import { useFocusEffect } from "@react-navigation/native"
 import { getRandomImage } from "../utils/Utils"
 
 export default function LoginScreen() {

@@ -5,7 +5,7 @@ const images = [
   require("../assets/g4.jpg"),
   require("../assets/g5.jpg"),
   require("../assets/g6.jpg"),
-  require("../assets/g7.jpg"),
+  require("../assets/g7.jpeg"),
 ]
 
 export const getRandomImage = () =>
