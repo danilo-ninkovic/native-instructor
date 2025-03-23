@@ -5,6 +5,7 @@ import { StyleSheet } from "react-native"
 import { Provider as PaperProvider } from "react-native-paper"
 import LoginScreen from "./screens/LoginScreen"
 import theme from "./utils/PaperTheme"
+import HomeScreen from "./screens/HomeScreen"
 
 const Stack = createNativeStackNavigator()
 export default function App() {
@@ -15,6 +16,7 @@ export default function App() {
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Home" component={HomeScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

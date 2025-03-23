@@ -9,7 +9,7 @@ const theme = {
   colors: {
     ...DefaultTheme.colors,
     primary: secBlue,
-    secundary: secOrange,
+    secondary: secOrange,
     grey: secGrey,
   },
 }
