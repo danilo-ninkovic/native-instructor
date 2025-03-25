@@ -1,4 +1,6 @@
 import { StatusBar } from "expo-status-bar"
+import { Provider } from "react-redux"
+import store from "./redux/store"
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { StyleSheet } from "react-native"
@@ -11,15 +13,17 @@ const Stack = createNativeStackNavigator()
 export default function App() {
   return (
     <>
-      <PaperProvider theme={theme}>
-        <StatusBar style="auto" />
-        <NavigationContainer>
-          <Stack.Navigator>
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Home" component={HomeScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </PaperProvider>
+      <Provider store={store}>
+        <PaperProvider theme={theme}>
+          <StatusBar style="auto" />
+          <NavigationContainer>
+            <Stack.Navigator>
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Home" component={HomeScreen} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </PaperProvider>
+      </Provider>
     </>
   )
 }
