@@ -1,21 +1,33 @@
-import { StyleSheet, Text, View, Image, Dimensions } from "react-native";
-import React, { useState, useCallback } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { TextInput, IconButton, useTheme } from "react-native-paper";
-import { getRandomImage } from "../utils/Utils";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { StyleSheet, Text, View, Image, Dimensions } from "react-native"
+import React, { useState, useCallback, useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useFocusEffect } from "@react-navigation/native"
+import { TextInput, useTheme } from "react-native-paper"
+import { getRandomImage } from "../utils/Utils"
+import Ionicons from "@expo/vector-icons/Ionicons"
+import { checkName } from "../redux/userSlice"
 
-const { width, height } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window")
 export default function LoginScreen({ navigation }) {
-  const theme = useTheme();
-  const [randomImage, setRandomImage] = useState(null);
-  const [text, setText] = useState("");
+  const theme = useTheme()
+  const dispatch = useDispatch()
+  const { loading, checkedUser, error } = useSelector((state) => state.user)
+  const [randomImage, setRandomImage] = useState(null)
+  const [text, setText] = useState("")
 
   useFocusEffect(
     useCallback(() => {
-      setRandomImage(getRandomImage);
+      setRandomImage(getRandomImage)
     }, [])
-  );
+  )
+  useEffect(() => {
+    checkedUser && navigation.navigate("Home")
+    error && console.log(error)
+  }, [checkedUser, error])
+
+  const PressHandler = () => {
+    dispatch(checkName(text))
+  }
 
   return (
     <View style={styles.container}>
@@ -46,14 +58,14 @@ export default function LoginScreen({ navigation }) {
           right={
             <TextInput.Icon
               icon="send"
-              onPress={() => navigation.navigate("Home")}
+              onPress={PressHandler}
               color={theme.colors.secondary}
             />
           }
         />
       </View>
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -85,4 +97,4 @@ const styles = StyleSheet.create({
 
     marginBottom: 10,
   },
-});
+})
