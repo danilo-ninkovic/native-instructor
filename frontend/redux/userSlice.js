@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axios from "axios"
+import BASE_URL from "../utils/config"
 
 export const checkName = createAsyncThunk(
-  "user/checkName",
+  `${BASE_URL}/user/checkName`,
   async (name, { rejectWithValue }) => {
     console.log(name)
 
@@ -11,6 +12,8 @@ export const checkName = createAsyncThunk(
         headers: { "Content-Type": "application/json" },
       }
       const { data } = await axios.post("/api/users/login", { name }, config)
+      console.log(data)
+
       return data
     } catch (error) {
       console.log(error)
