@@ -1,14 +1,16 @@
 // umjesto try-catch za async funkcije - errors se onda mogu podesiti kao custom "errorHandler" za sve
-import asyncHandler from "express-async-handler"
-import User from "../models/userModel.js"
+import asyncHandler from "express-async-handler";
+import User from "../models/userModel.js";
 
 //trigers in  "loginMaterialUIScreen-u" by fn "checkName" -userActions.js
 //route....POST /api/users/login
 //..........public acces
 const checkUser = asyncHandler(async (req, res) => {
   // checking(by 'name') if User exists
-  const { name } = req.body
-  const user = await User.findOne({ name })
+  const { name } = req.body;
+  console.log(name);
+
+  const user = await User.findOne({ name });
   if (user) {
     res.json({
       _id: user._id,
@@ -16,20 +18,20 @@ const checkUser = asyncHandler(async (req, res) => {
       hasPassword: user.hasPassword,
       oneDevice: user.oneDevice,
       deviceId: user.deviceId,
-    })
+    });
   } else {
-    res.status(404)
-    throw new Error("Korisnik nije pronađen ")
+    res.status(404);
+    throw new Error("Korisnik nije pronađen ");
   }
-})
+});
 
 //trigers in  "PasswordMaterialUiscreen-u" by fn "login" -userActions.js
 //route....... POST /api/users/login/password
 //.............. public acces
 const loginUser = asyncHandler(async (req, res) => {
-  const { name, password } = req.body
+  const { name, password } = req.body;
   // checking(by 'name')
-  const user = await User.findOne({ name })
+  const user = await User.findOne({ name });
   // if User exists & if password is matched
   if (user && (await user.matchPassword(password))) {
     //matchPassword is  medhod in userSchema
@@ -44,27 +46,27 @@ const loginUser = asyncHandler(async (req, res) => {
       viewedUpustva: user.viewedUpustva,
       /* also generate token (userShema method) */
       token: user.generateToken(),
-    })
+    });
   } else {
-    res.status(404)
-    throw new Error("Pogrešna šifra - pokušajte ponovo ") //  middleware/errorMiddleware.js
+    res.status(404);
+    throw new Error("Pogrešna šifra - pokušajte ponovo "); //  middleware/errorMiddleware.js
   }
-})
+});
 
 //trigers in  "PasswordMaterialUiscreen-u" by fn "registerPassword" -userActions.js
 //route......PUT /api/users/pass/:id
 //access........private
 const registerUserPassword = asyncHandler(async (req, res) => {
-  const { password, uuid } = req.body
+  const { password, uuid } = req.body;
   //find User by URL-id
-  const user = await User.findById(req.params.id)
+  const user = await User.findById(req.params.id);
   // setting up with password, deviceId form req.body & hasPasword
   if (user) {
-    user.password = password
-    user.hasPassword = true
-    user.deviceId = uuid
+    user.password = password;
+    user.hasPassword = true;
+    user.deviceId = uuid;
 
-    const udatedUser = await user.save()
+    const udatedUser = await user.save();
 
     res.json({
       _id: udatedUser._id,
@@ -75,12 +77,12 @@ const registerUserPassword = asyncHandler(async (req, res) => {
       usersAdmin: udatedUser.usersAdmin,
       upustvaAdmin: udatedUser.upustvaAdmin,
       upustvaMaker: udatedUser.upustvaMaker,
-    })
+    });
   } else {
-    res.status(404)
-    throw new Error("Problem prilikom logovanja - korisnik nije pronađen")
+    res.status(404);
+    throw new Error("Problem prilikom logovanja - korisnik nije pronađen");
   }
-})
+});
 
 // Register new User
 //route.....POST /api/users
@@ -95,12 +97,12 @@ const registerUser = asyncHandler(async (req, res) => {
     upustvaMaker,
     adminsForUser,
     creator,
-  } = req.body
+  } = req.body;
   //checking(by name) if it currently exists
-  const userExist = await User.findOne({ name })
+  const userExist = await User.findOne({ name });
   if (userExist) {
-    res.status(400)
-    throw new Error(`Korisnik ${name} već postoji`)
+    res.status(400);
+    throw new Error(`Korisnik ${name} već postoji`);
   }
   //if not currently exists
   const user = await User.create({
@@ -113,7 +115,7 @@ const registerUser = asyncHandler(async (req, res) => {
     adminsForUser,
     creator,
     /*  password will be encripted & created at the first login */
-  })
+  });
   /* if User create successfully send back object (created User) */
   if (user) {
     res.status(201).json({
@@ -127,33 +129,33 @@ const registerUser = asyncHandler(async (req, res) => {
       adminsForUser: user.adminsForUser,
       creator: user.creator,
       hasPassword /* false  default */,
-    })
+    });
   } else {
-    res.status(400)
-    throw new Error("ne ispravni podaci za User-a")
+    res.status(400);
+    throw new Error("ne ispravni podaci za User-a");
   }
-})
+});
 
 //@desc.....Get all Users
 //@route......GET /api/users
 //access........private
 const getUsers = asyncHandler(async (req, res) => {
-  const users = await User.find({}) //find all
-  res.json(users)
-})
+  const users = await User.find({}); //find all
+  res.json(users);
+});
 
 //@desc.....Get  User by URL-id
 //@route......GET /api/users/:id
 //access........private
 const getUserById = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id).select("-password") // don't use password to send back
+  const user = await User.findById(req.params.id).select("-password"); // don't use password to send back
   if (user) {
-    res.json(user)
+    res.json(user);
   } else {
-    res.status(404)
-    throw new Error("User nije pronadjen")
+    res.status(404);
+    throw new Error("User nije pronadjen");
   }
-})
+});
 
 //@desc.....Get  User by Departmens -
 // returns Users who have any departmens from the logged in User -
@@ -161,19 +163,19 @@ const getUserById = asyncHandler(async (req, res) => {
 //@route......GET /api/users/departmens
 //access........private
 const getUsersByDepartmens = asyncHandler(async (req, res) => {
-  const { departmens } = req.body
+  const { departmens } = req.body;
 
-  const users = await User.find({ poslovnica: { $in: departmens } })
+  const users = await User.find({ poslovnica: { $in: departmens } });
   /*If we want remain Users who don't have any departmens of loged User, then 
   const users = await User.find({ poslovnica: { $nin: departmens } })
   */
   if (users) {
-    res.json(users)
+    res.json(users);
   } else {
-    res.status(404)
-    throw new Error("Useri po Poslovnicama nisu pronađeni")
+    res.status(404);
+    throw new Error("Useri po Poslovnicama nisu pronađeni");
   }
-})
+});
 
 //@desc.....update User
 //@route......PUT /api/users/:id
@@ -187,7 +189,7 @@ const updateUser = asyncHandler(async (req, res) => {
     usersAdmin,
     upustvaMaker,
     adminsForUser,
-  } = req.body
+  } = req.body;
   // find User by URL-id & setting up with new req.body parameters
   const updatedUser = await User.findByIdAndUpdate(
     req.params.id,
@@ -201,45 +203,45 @@ const updateUser = asyncHandler(async (req, res) => {
       adminsForUser,
     },
     { new: true }
-  )
+  );
   if (updatedUser) {
-    res.json(updatedUser)
+    res.json(updatedUser);
   } else {
-    res.status(404)
-    throw new Error("Korisnik nije pronadjen")
+    res.status(404);
+    throw new Error("Korisnik nije pronadjen");
   }
-})
+});
 
 //@desc.....Update loged user, for updating his viewedUpustva parameter
 //@route......put /api/users/login
 //access........public
 const updateLoged = asyncHandler(async (req, res) => {
-  const { id, vUpustva } = req.body
-  const user = await User.findById(id)
+  const { id, vUpustva } = req.body;
+  const user = await User.findById(id);
   if (user) {
-    user.viewedUpustva = vUpustva
-    await user.save()
-    res.json(user)
+    user.viewedUpustva = vUpustva;
+    await user.save();
+    res.json(user);
   } else {
-    res.status(404)
-    throw new Error("updade viewedUpustava nije uspjelo")
+    res.status(404);
+    throw new Error("updade viewedUpustava nije uspjelo");
   }
-})
+});
 
 //@desc.....Delete user by URL-id
 //@route......DELETE  /api/users/:id
 //access........private
 const deleteUser = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.params.id) //ID je u URL-u
+  const user = await User.findById(req.params.id); //ID je u URL-u
 
   if (user) {
-    await user.remove()
-    res.json({ mesage: "Korisnik je obrisan" })
+    await user.remove();
+    res.json({ mesage: "Korisnik je obrisan" });
   } else {
-    res.status(404)
-    throw new Error("Ne postoji korisnik za brisanje")
+    res.status(404);
+    throw new Error("Ne postoji korisnik za brisanje");
   }
-})
+});
 
 export {
   checkUser,
@@ -252,4 +254,4 @@ export {
   updateUser,
   getUsersByDepartmens,
   updateLoged,
-}
+};
