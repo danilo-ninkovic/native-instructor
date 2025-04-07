@@ -8,7 +8,6 @@ import User from "../models/userModel.js";
 const checkUser = asyncHandler(async (req, res) => {
   // checking(by 'name') if User exists
   const { name } = req.body;
-  console.log(name);
 
   const user = await User.findOne({ name });
   if (user) {
