@@ -1,7 +1,23 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
+import axios from "axios"
 
-import BASE_URL from "../utils/config";
+import BASE_URL from "../utils/config"
+
+//reusable function for .addCase-s
+const handleAsyncActions = (builder, action, stateKey) => {
+  builder
+    .addCase(action.pending, (state) => {
+      state.loading = true //loading
+    })
+    .addCase(action.fulfilled, (state, action) => {
+      state.loading = false
+      state[stateKey] = action.payload //state data for stateKey
+    })
+    .addCase(action.rejected, (state, action) => {
+      state.loading = false
+      state.error = action.payload //state error
+    })
+}
 
 export const checkName = createAsyncThunk(
   "user/checkName",
@@ -9,27 +25,27 @@ export const checkName = createAsyncThunk(
     try {
       const config = {
         headers: { "Content-Type": "application/json" },
-      };
+      }
       const { data } = await axios.post(
         `${BASE_URL}/api/users/login`,
         { name },
         config
-      );
+      )
 
-      console.log("user/checkName", data);
+      console.log("user/checkName", data)
 
-      return data;
+      return data
     } catch (error) {
-      console.log(error);
+      console.log(error)
 
       return rejectWithValue(
         error.response && error.response.data.message
           ? error.response.data.message
           : error.message || "Something went wrong"
-      );
+      )
     }
   }
-);
+)
 
 const userSlice = createSlice({
   name: "user",
@@ -43,18 +59,8 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(checkName.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(checkName.fulfilled, (state, action) => {
-        state.loading = false;
-        state.checkedUser = action.payload; // Postavite podatke korisnika
-      })
-      .addCase(checkName.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload; // Postavite grešku
-      });
+    handleAsyncActions(builder, checkName, "checkedUser")
   },
-});
+})
 
-export default userSlice.reducer;
+export default userSlice.reducer

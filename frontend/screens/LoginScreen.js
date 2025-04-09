@@ -14,20 +14,80 @@ export default function LoginScreen({ navigation }) {
   const { loading, checkedUser, error } = useSelector((state) => state.user)
   const [randomImage, setRandomImage] = useState(null)
   const [text, setText] = useState("")
+  const [password, setPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
 
   useFocusEffect(
     useCallback(() => {
       setRandomImage(getRandomImage)
     }, [])
   )
-  useEffect(() => {
-    checkedUser && navigation.navigate("Home")
+
+  // ovo treba tek nakon unosa passworda da se ide u Home screen
+  //i treba UserInfo  nako login(name, password) umjesto  sheckedUser
+  /*   useEffect(() => {
+     checkedUser && navigation.navigate("Home") 
     error && console.log(error)
-  }, [checkedUser, error])
+  }, [checkedUser, error]) */
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!setPassword)
+  }
 
   const PressHandler = () => {
     dispatch(checkName(text))
   }
+
+  const input = (
+    <TextInput
+      value={text}
+      onChangeText={setText}
+      label="Korisnik"
+      mode="flat"
+      style={styles.input}
+      theme={{
+        colors: {
+          primary: theme.colors.secondary, // Boja bordera
+          onSurfaceVariant: theme.colors.secondary,
+        },
+      }}
+      selectionColor={theme.colors.secondary} // Boja selekcije (kursor)
+      textColor={theme.colors.secondary}
+      right={
+        <TextInput.Icon
+          icon="send"
+          onPress={PressHandler}
+          color={theme.colors.secondary}
+        />
+      }
+    />
+  )
+
+  const passwordInput = (
+    <TextInput
+      label="Lozinka"
+      value={password}
+      onChangeText={setPassword}
+      mode="flat"
+      style={styles.input}
+      theme={{
+        colors: {
+          primary: theme.colors.secondary, // Boja bordera
+          onSurfaceVariant: theme.colors.secondary,
+        },
+      }}
+      selectionColor={theme.colors.secondary} // Boja selekcije (kursor)
+      textColor={theme.colors.secondary}
+      secureTextEntry={!showPassword} // Prikazuje lozinku ili je sakriva
+      right={
+        <TextInput.Icon
+          icon={showPassword ? "eye-off" : "eye"} // Menja ikonu na osnovu stanja
+          onPress={togglePasswordVisibility}
+          color={theme.colors.secondary}
+        />
+      }
+    />
+  )
 
   return (
     <View style={styles.container}>
@@ -40,30 +100,7 @@ export default function LoginScreen({ navigation }) {
       <Text style={[styles.title, { color: theme.colors.secondary }]}>
         LOGIN
       </Text>
-      <View style={styles.overlay}>
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          label="Korisnik"
-          mode="flat"
-          style={styles.input}
-          theme={{
-            colors: {
-              primary: theme.colors.secondary, // Boja bordera
-              onSurfaceVariant: theme.colors.secondary,
-            },
-          }}
-          selectionColor={theme.colors.secondary} // Boja selekcije (kursor)
-          textColor={theme.colors.secondary}
-          right={
-            <TextInput.Icon
-              icon="send"
-              onPress={PressHandler}
-              color={theme.colors.secondary}
-            />
-          }
-        />
-      </View>
+      <View style={styles.overlay}>{!checkedUser ? input : passwordInput}</View>
     </View>
   )
 }
